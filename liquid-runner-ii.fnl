@@ -7,8 +7,11 @@
 (local player {:x 20 :y 20 :w 8 :h 16 :spr 256})
 (local flags {:wall 0 :ladder 1 :water 2})
 
-(fn inside? [{: x : y} flag]
-  (fget (mget (// x 8) (// y 8)) flag))
+(fn inside? [{: x : y : w : h} flag]
+  (or (fget (mget (// x 8) (// y 8)) flag)
+      (fget (mget (// (+ x w -1) 8) (// y 8)) flag)
+      (fget (mget (// x 8) (// (+ y h -1) 8)) flag)
+      (fget (mget (// (+ x w -1) 8) (// (+ y h -1) 8)) flag)))
 
 (fn move []
   (let [{: x : y} player
