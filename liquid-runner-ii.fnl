@@ -13,6 +13,10 @@
       (fget (mget (// x 8) (// (+ y h -1) 8)) flag)
       (fget (mget (// (+ x w -1) 8) (// (+ y h -1) 8)) flag)))
 
+(fn stand-on? [{: x : y : w : h} flag]
+  (or (fget (mget (// x 8 -1) (// (+ y h) 8)) flag)
+      (fget (mget (// (+ x w -1) 8) (// (+ y h) 8)) flag)))
+
 (fn move []
   (let [{: x : y} player
         vertical? (or (inside? player flags.ladder)
@@ -26,8 +30,20 @@
       (set player.x x)
       (set player.y y))))
 
+(fn update []
+  (when (and (not (stand-on? player flags.solid))
+             (not (inside? player flags.water))
+             (not (inside? player flags.ladder)))
+    (set player.y (+ player.y 1)))
+  (when (and (inside? player flags.water)
+             (not (inside? player flags.ladder))
+             (not (inside? player flags.wall))
+             (< (math.random) 0.5))
+    (set player.y (+ player.y 1))))
+
 (fn _G.TIC []
   (move)
+  (update)
   (map)
   (spr player.spr player.x player.y 0 1 0 0 1 2))
 
