@@ -85,8 +85,10 @@
         from (group top-x top-y flags.water [])
         to (pipe-to (last tiles) 99)
         key (xykey top-x top-y)]
-    (tset active-pipes key {: tiles : key
-                            : from : to :x top-x :y top-y})))
+    ;; refuse to activate a pipe with no water
+    (when (< 0 (length from))
+      (tset active-pipes key {: tiles : key
+                              : from : to :x top-x :y top-y}))))
 
 (fn toggle-pipe [cx cy] ; only vertical pipes for now
   (match (find-by active-pipes (partial pipe-contains? cx cy))
@@ -161,12 +163,12 @@
             flags.water)))
 
 (fn reset []
+  (sync 4 1 false)
   (into player checkpoint-player)
   (each [_ [px py] (pairs checkpoint-pipes)]
     (activate-pipe px py))
   (set player.reset -100)
-  (set player.msg nil)
-  (sync 4 1 false))
+  (set player.msg nil))
 
 (fn count-reset []
   (set player.reset (+ player.reset 1))
@@ -181,10 +183,27 @@
   (each [_ p (pairs active-pipes)]
     (table.insert checkpoint-pipes [p.x p.y])))
 
+(fn left-sprite? [s] (<= 288 s 291))
+(fn right-sprite? [s] (<= 256 s 259))
+
+(fn next-spr [s dir]
+  (if (and (left-sprite? s) (= 1 dir)) 256
+      (and (right-sprite? s) (= -1 dir)) 291
+      (= 259 s) 256
+      (= s 288) 291
+      (+ s dir)))
+
+(var t 0)
+
+(fn go [dir]
+  (when (= (math.fmod t 5) 0)
+    (set player.spr (next-spr player.spr dir)))
+  (set player.x (+ player.x dir)))
+
 (fn input []
   (let [{: x : y} player]
-    (when (btn 2) (set player.x (+ player.x -1)))
-    (when (btn 3) (set player.x (+ player.x +1)))
+    (when (btn 2) (go -1))
+    (when (btn 3) (go 1))
     (when (and (btn 0) (up-ok? player))
       (set player.y (+ player.y -1)))
     (when (and (btn 1)
@@ -201,8 +220,6 @@
   (if (btn 5)
       (count-reset)
       (set player.reset 0)))
-
-(var t 0)
 
 (fn update []
   ;; gravity in air
@@ -305,11 +322,21 @@
 
 ;; <SPRITES>
 ;; 000:00bbbbb00bbbbbb00b44e4400b4444400b444400000400000011100000411000
+;; 001:00bbbbb00bbbbbb00b44e4400b4444400b444400000400000011100000411000
+;; 002:00bbbbb00bbbbbb00b44e4400b4444400b444400000400000011100000411000
+;; 003:00bbbbb00bbbbbb00b44e4400b4444400b444400000400000011100000411000
 ;; 016:00411000004444e0001110000099900000999000009990000090900000f0ff00
-;; 224:0000000000000000000000000000000000330000003333000000033000000030
-;; 225:0000000003300000333300003333000033330033434300333333003033330330
-;; 240:0333333303300033000033300000300000033003000330030000000000000000
-;; 241:3333330033333333030030030300300033003300330003300000033000000000
+;; 017:00411000004444e0001110000099900000999000009099000090090000f00f00
+;; 018:00411000004444e0001110000099900000999000090090000900900008f0ff00
+;; 019:00411000004444e0001110000099900000999000009990000090900000f0ff00
+;; 032:0bbbbb000bbbbbb0044e44b0044444b0004444b0000040000001110000011400
+;; 033:0bbbbb000bbbbbb0044e44b0044444b0004444b0000040000001110000011400
+;; 034:0bbbbb000bbbbbb0044e44b0044444b0004444b0000040000001110000011400
+;; 035:0bbbbb000bbbbbb0044e44b0044444b0004444b0000040000001110000011400
+;; 048:000114000e444400000111000009990000099900000999000009090000ff0f00
+;; 049:000114000e444400000111000009990000099900000900900009009000ff0f80
+;; 050:000114000e444400000111000009990000099900009909000090090000f00f00
+;; 051:000114000e444400000111000009990000099900000999000009090000ff0f00
 ;; </SPRITES>
 
 ;; <MAP>
