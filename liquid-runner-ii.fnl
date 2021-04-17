@@ -39,6 +39,7 @@
         [-1 1] [0 1] [1 1]])
 
 (fn group [cx cy flag out]
+  "Return a table of coordinates for all tiles near cx/cy that all have flag"
   (each [_ [dx dy] (ipairs neighbors)]
     (let [nx (+ cx dx) ny (+ cy dy)]
       (when (and (fget (mget nx ny) flag)
@@ -152,7 +153,9 @@
     (when (btn 3) (set player.x (+ player.x +1)))
     (when (and (btn 0) (up-ok? player))
       (set player.y (+ player.y -1)))
-    (when (and (btn 1) (stand-on? player flags.ladder))
+    (when (and (btn 1)
+               (or (inside? player flags.ladder)
+                   (stand-on? player flags.ladder)))
       (set player.y (+ player.y +1)))
     ;; undo it if you try to move into a wall
     (when (inside? player flags.wall)

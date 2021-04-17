@@ -2,14 +2,14 @@
 
 ## Coding
 
-* [ ] smoother movement
+* [X] smoother movement
 
 * [X] scrolling
 * [X] pipes taking water out of places
 * [X] pipes draining into places
-* [ ] draining affects underwater ladders
+* [X] draining affects underwater ladders
 
-* [ ] swimming in half-water
+* [X] swimming in half-water
 
 * [ ] horizontal pipes
 * [ ] overflow
@@ -20,7 +20,7 @@
 ## Sprites
 
 * [X] underwater ladder tiles
-* [ ] pipes going thru walls
+* [X] pipes going thru walls
 * [ ] ladders going thru pipes
 
 ## Levels
