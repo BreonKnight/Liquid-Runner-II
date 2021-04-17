@@ -59,6 +59,7 @@
 ;; setup
 
 (local checkpoint-player {:x 20 :y 20 :w 8 :h 16 :spr 256 :reset 0})
+(local checkpoint-pipes [])
 (local player {:x 20 :y 20 :w 8 :h 16 :spr 256 :reset 0})
 (local active-pipes [])
 
@@ -145,6 +146,7 @@
 (fn inside? [{: x : y : w : h} flag]
   (or (fget (mget (// x 8) (// y 8)) flag)
       (fget (mget (// (+ x w -1) 8) (// y 8)) flag)
+      (fget (mget (// (+ x 4) 8) (// (+ y 7) 8)) flag)
       (fget (mget (// x 8) (// (+ y h -1) 8)) flag)
       (fget (mget (// (+ x w -1) 8) (// (+ y h -1) 8)) flag)))
 
@@ -159,11 +161,11 @@
 
 (fn reset []
   (into player checkpoint-player)
-  (each [k (pairs active-pipes)]
-    (tset active-pipes k nil))
+  (each [_ [px py] (pairs checkpoint-pipes)]
+    (activate-pipe px py))
   (set player.reset -100)
   (set player.msg nil)
-  (sync 0 0 false))
+  (sync 4 1 false))
 
 (fn count-reset []
   (set player.reset (+ player.reset 1))
@@ -173,7 +175,10 @@
 (fn set-checkpoint []
   (set player.msg "checkpoint!")
   (mset (// player.x 8) (// player.y 8) 227)
-  (into checkpoint-player player))
+  (sync 4 1 true)
+  (into checkpoint-player player)
+  (each [_ p (pairs active-pipes)]
+    (table.insert checkpoint-pipes [p.x p.y])))
 
 (fn input []
   (let [{: x : y} player]
@@ -239,6 +244,8 @@
   (input)
   (update)
   (draw))
+
+(sync 4 1 true)
 
 ;; <TILES>
 ;; 001:5666666f5666666f056666f0056666f0056666f0056666f0056666f0056666f0

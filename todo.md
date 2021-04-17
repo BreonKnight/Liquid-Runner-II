@@ -10,6 +10,7 @@
 * [X] draining affects underwater ladders
 
 * [X] swimming in half-water
+* [X] checkpoint saves map state
 
 * [ ] horizontal pipes
 * [ ] overflow
