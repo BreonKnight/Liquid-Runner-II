@@ -53,9 +53,13 @@
         (group nx ny flag out))))
   out)
 
+(fn into [to from]
+  (each [k v (pairs from)] (tset to k v)))
+
 ;; setup
 
-(local player {:x 20 :y 20 :w 8 :h 16 :spr 256})
+(local checkpoint-player {:x 20 :y 20 :w 8 :h 16 :spr 256 :reset 0})
+(local player {:x 20 :y 20 :w 8 :h 16 :spr 256 :reset 0})
 (local active-pipes [])
 
 (local flags {:wall 0 :ladder 1 :water 2
@@ -153,6 +157,24 @@
       (fget (mget (// player.x 8) (+ (// player.y 8) 1))
             flags.water)))
 
+(fn reset []
+  (into player checkpoint-player)
+  (each [k (pairs active-pipes)]
+    (tset active-pipes k nil))
+  (set player.reset -100)
+  (set player.msg nil)
+  (sync 0 0 false))
+
+(fn count-reset []
+  (set player.reset (+ player.reset 1))
+  (when (= 90 player.reset)
+    (reset)))
+
+(fn set-checkpoint []
+  (set player.msg "checkpoint!")
+  (mset (// player.x 8) (// player.y 8) 227)
+  (into checkpoint-player player))
+
 (fn input []
   (let [{: x : y} player]
     (when (btn 2) (set player.x (+ player.x -1)))
@@ -169,7 +191,10 @@
       (set player.y y)))
   (when (btnp 4)
     (match (touching player.x player.y flags.vpipe)
-      [cx cy] (toggle-pipe cx cy))))
+      [cx cy] (toggle-pipe cx cy)))
+  (if (btn 5)
+      (count-reset)
+      (set player.reset 0)))
 
 (var t 0)
 
@@ -187,20 +212,27 @@
              (not (inside? player flags.wall))
              (< (math.random) 0.3))
     (set player.y (+ player.y 1)))
-  ;; water drains at a slower rate; only every 30 ticks
-  (set t (math.fmod (+ t 1) 30))
+  ;; water drains at a slower rate; only every fen ticks
+  (set t (math.fmod (+ t 1) 20))
   (when (= t 0)
     (each [_ pipe (pairs active-pipes)]
       (flow pipe)))
   ;; checkpoint
   (when (= 226 (mget (// player.x 8) (// player.y 8)))
-    (mset (// player.x 8) (// player.y 8) 227)))
+    (set-checkpoint)))
 
 (fn draw []
   (map (- (// player.x 8) 14) (- (// player.y 8) 8)
        31 18
        (- (math.fmod player.x 8))
        (- (math.fmod player.y 8)))
+  (when (< 0 player.reset)
+    (print "hold x to reset" 8 8 12))
+  (when player.msg
+    (print player.msg 8 128 12)
+    (set player.msg-count (- (or player.msg-count 120) 1))
+    (when (= 0 player.msg-count)
+      (set player.msg nil)))
   (spr player.spr 112 64 0 1 0 0 1 2))
 
 (fn _G.TIC []
