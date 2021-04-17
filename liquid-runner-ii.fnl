@@ -49,7 +49,6 @@
 
 ;; setup
 
-(var t 0)
 (local player {:x 20 :y 20 :w 8 :h 16 :spr 256})
 (local active-pipes [])
 
@@ -130,35 +129,45 @@
     (when vertical?
       (when (btn 0) (set player.y (+ player.y -1)))
       (when (btn 1) (set player.y (+ player.y +1))))
+    ;; undo it if you try to move into a wall
     (when (inside? player flags.wall)
       (set player.x x)
       (set player.y y)))
   (when (btnp 4)
     (match (touching player.x player.y flags.vpipe)
-      (cx cy) (toggle-pipe cx cy)))
-  (when (btnp 5)
-    (pp active-pipes)))
+      (cx cy) (toggle-pipe cx cy))))
+
+(var t 0)
 
 (fn update []
-  (set t (math.fmod (+ t 1) 30))
+  ;; gravity in air
   (when (and (not (stand-on? player flags.wall))
              (not (inside? player flags.water))
              (not (inside? player flags.ladder)))
     (set player.y (+ player.y 1)))
+  ;; gravity in water is weaker
   (when (and (inside? player flags.water)
              (not (inside? player flags.ladder))
              (not (inside? player flags.wall))
-             (< (math.random) 0.5))
+             (< (math.random) 0.3))
     (set player.y (+ player.y 1)))
+  ;; water drains at a slower rate; only every 30 ticks
+  (set t (math.fmod (+ t 1) 30))
   (when (= t 0)
     (each [_ pipe (pairs active-pipes)]
       (flow pipe))))
 
+(fn draw []
+  (map (- (// player.x 8) 14) (- (// player.y 8) 8)
+       31 18
+       (- (math.fmod player.x 8))
+       (- (math.fmod player.y 8)))
+  (spr player.spr 112 64 0 1 0 0 1 2))
+
 (fn _G.TIC []
   (input)
   (update)
-  (map)
-  (spr player.spr player.x player.y 0 1 0 0 1 2))
+  (draw))
 
 ;; <TILES>
 ;; 001:eeeedeeeeeeedeee66ddeddde6eeeeeee6eeeeeeedeeeeeeded66666eeee6eee
