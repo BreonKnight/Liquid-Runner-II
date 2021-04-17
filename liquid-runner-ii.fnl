@@ -84,8 +84,10 @@
         from (group top-x top-y flags.water [])
         to (pipe-to (last tiles) 99)
         key (xykey top-x top-y)]
-    (tset active-pipes key {: tiles : key
-                            : from : to :x top-x :y top-y})))
+    ;; refuse to activate a pipe with no water
+    (when (< 0 (length from))
+      (tset active-pipes key {: tiles : key
+                              : from : to :x top-x :y top-y}))))
 
 (fn toggle-pipe [cx cy] ; only vertical pipes for now
   (match (find-by active-pipes (partial pipe-contains? cx cy))
@@ -160,12 +162,12 @@
             flags.water)))
 
 (fn reset []
+  (sync 4 1 false)
   (into player checkpoint-player)
   (each [_ [px py] (pairs checkpoint-pipes)]
     (activate-pipe px py))
   (set player.reset -100)
-  (set player.msg nil)
-  (sync 4 1 false))
+  (set player.msg nil))
 
 (fn count-reset []
   (set player.reset (+ player.reset 1))
