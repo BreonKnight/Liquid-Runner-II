@@ -12,23 +12,29 @@
 * [X] swimming in half-water
 * [X] checkpoint saves map state
 
-* [ ] horizontal pipes?
-* [ ] overflow?
-
 * [X] sliding movement
 * [X] waterfall animation
 * [ ] falling animation
 * [ ] swimming animation
 
-* [ ] bomb carrying animation
-* [ ] bomb collision detection
-* [ ] bomb throwing
+* [X] bomb carrying animation
+* [ ] bomb exploding animation
+* [X] bomb collision detection
 * [ ] bomb zapper (can't carry a bomb thru it)
 
+* [ ] enemies
+
 * [X] ice
-* [ ] pipes that pump from down to up?
+* [ ] pipes that pump from down to up
 
 * [X] explain that you can reset with X
+
+## Maybe code
+
+* [ ] bomb throwing
+* [ ] horizontal pipes?
+* [ ] overflow?
+* [ ] electrical system
 
 ## Sprites
 
