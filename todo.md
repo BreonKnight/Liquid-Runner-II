@@ -18,9 +18,8 @@
 * [ ] swimming animation
 
 * [X] bomb carrying animation
-* [ ] bomb exploding animation
+* [X] bomb exploding animation
 * [X] bomb collision detection
-* [ ] bomb zapper (can't carry a bomb thru it)
 
 * [ ] enemies
 
