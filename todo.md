@@ -23,6 +23,7 @@
 * [ ] bomb carrying animation
 * [ ] bomb collision detection
 * [ ] bomb throwing
+* [ ] bomb zapper (can't carry a bomb thru it)
 
 * [X] ice
 * [ ] pipes that pump from down to up?
