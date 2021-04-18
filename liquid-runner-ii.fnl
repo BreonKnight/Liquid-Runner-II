@@ -56,6 +56,8 @@
 (fn into [to from]
   (each [k v (pairs from)] (tset to k v)))
 
+(fn pick [tbl] (. tbl (math.random (length tbl))))
+
 ;; setup
 
 (local (start-x start-y) (values 16 944))
@@ -150,7 +152,8 @@
 (fn inside? [{: x : y : w : h} flag]
   (or (fget (mget (// x 8) (// y 8)) flag)
       (fget (mget (// (+ x w -1) 8) (// y 8)) flag)
-      (fget (mget (// (+ x 4) 8) (// (+ y 7) 8)) flag)
+      (fget (mget (// x 8) (// (+ y 7) 8)) flag)
+      (fget (mget (// (+ x w -1) 8) (// (+ y 7) 8)) flag)
       (fget (mget (// x 8) (// (+ y h -1) 8)) flag)
       (fget (mget (// (+ x w -1) 8) (// (+ y h -1) 8)) flag)))
 
@@ -205,6 +208,10 @@
   (let [{: x : y} player]
     (when (btn 2) (go -1))
     (when (btn 3) (go 1))
+    (when (inside? player flags.wall)
+      (set player.x x)
+      (set player.y y)))
+  (let [{: x : y} player]
     (when (and (btn 0) (up-ok? player))
       (set player.y (+ player.y -1)))
     (when (and (btn 1)
@@ -245,11 +252,20 @@
   (when (= 226 (mget (// player.x 8) (// player.y 8)))
     (set-checkpoint)))
 
+(local waterfall-tiles [270 271 286 287])
+
 (fn draw []
-  (map (- (// player.x 8) 14) (- (// player.y 8) 8)
-       31 18
-       (- (math.fmod player.x 8))
-       (- (math.fmod player.y 8)))
+  (cls)
+  (let [ox (- (// player.x 8) 14)
+        oy (- (// player.y 8) 8)
+        sx (- (math.fmod player.x 8))
+        sy (- (math.fmod player.y 8))]
+    (each [_ p (pairs active-pipes)]
+      (for [y p.y (. p.to 2)]
+        (spr (pick waterfall-tiles)
+             (+ sx (* (- p.x ox) 8))
+             (+ sy (* (- y oy) 8)))))
+    (map ox oy 31 18 sx sy 0))
   (when (< 0 player.reset)
     (print "hold x to reset" 8 8 12))
   (when player.msg
@@ -326,10 +342,14 @@
 ;; 001:00bbbbb00bbbbbb00b44e4000b4244400b444400000400000011100000413000
 ;; 002:00bbbbb00bbbbbb00b44e4000b4244400b444400000400000011100000413000
 ;; 003:00bbbbb00bbbbbb00b44e4000b4244400b444400000400000011100000413000
+;; 014:088888800898888008888980088889800889898008a988a008a988a008a88880
+;; 015:08898a8008898a800889888008a9888008a9888008a8898008888980088a8980
 ;; 016:00411000004444e0001110000099900000999000009990000090900000f0ff00
 ;; 017:00411000004444e0001110000099900000999000009099000090090000f00f00
 ;; 018:00411000004444e0001110000099900000999000090090000900900008f0ff00
 ;; 019:00411000004444e0001110000099900000999000009990000090900000f0ff00
+;; 030:0888889009888890098888800989a8800989a88008a8a98008a8898008888880
+;; 031:088a88800898888008988a80089888a0088a98a0088a98a0088a888008888880
 ;; 032:0bbbbb000bbbbbb0004e44b0044454b0004444b0000040000001110000031400
 ;; 033:0bbbbb000bbbbbb0004e44b0044454b0004444b0000040000001110000031400
 ;; 034:0bbbbb000bbbbbb0004e44b0044454b0004444b0000040000001110000031400

@@ -15,6 +15,11 @@
 * [ ] horizontal pipes
 * [ ] overflow
 
+* [X] sliding movement
+* [X] waterfall animation
+* [ ] falling animation
+* [ ] swimming animation
+
 * [ ] ice?
 * [ ] pipes that pump from down to up?
 
