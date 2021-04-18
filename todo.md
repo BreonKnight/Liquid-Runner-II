@@ -20,14 +20,19 @@
 * [ ] falling animation
 * [ ] swimming animation
 
-* [ ] ice?
+* [ ] bomb carrying animation
+* [ ] bomb collision detection
+* [ ] bomb throwing
+
+* [X] ice
 * [ ] pipes that pump from down to up?
+
+* [ ] explain that you can reset with X
 
 ## Sprites
 
 * [X] underwater ladder tiles
 * [X] pipes going thru walls
-* [ ] ladders going thru pipes
 
 ## Levels
 
