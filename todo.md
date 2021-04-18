@@ -24,7 +24,7 @@
 * [ ] enemies
 
 * [X] ice
-* [ ] pipes that pump from down to up
+* [-] pipes that pump from down to up
 
 * [X] explain that you can reset with X
 
@@ -39,11 +39,19 @@
 
 * [X] underwater ladder tiles
 * [X] pipes going thru walls
+* [ ] ending screen
 
 ## Levels
 
-* ???
+* introduce each enemy
 
 ## Music
 
-* ???
+* [ ] gameplay song
+* [ ] winning song
+
+## sfx
+
+* [ ] bombs
+* [ ] checkpoint
+* [ ] waterfall
