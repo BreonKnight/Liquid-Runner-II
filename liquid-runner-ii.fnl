@@ -67,7 +67,8 @@
                           :w 8 :h 16 :spr 256 :reset 0
                           :carry false})
 (local checkpoint-pipes [])
-(local player {:x start-x :y start-y :w 8 :h 16 :spr 256 :reset 0})
+(local player {:x start-x :y start-y :w 8 :h 16
+               :spr 256 :reset 0 :idle 0})
 (local enemy {:x 0 :y 0 :w 8 :h 16 :spr 480 :reset 0})
 (local active-pipes [])
 (local bombs [])
@@ -207,7 +208,7 @@
     (table.insert checkpoint-pipes [p.x p.y])))
 
 (fn drop-bomb [sprite]
-  (set player.carry nil)
+  (set player.carry false)
   (table.insert bombs {:x player.x :y (+ player.y 8)
                        : sprite :timer 60}))
 
@@ -253,7 +254,10 @@
       (count-reset)
       (set player.reset 0))
   ;; CHEAT: delete when finished
-  (when (btnp 6) (set (player.x player.y) (values (* 30 8) (* 119 8)))))
+  (when (btnp 6) (set (player.x player.y) (values (* 30 8) (* 119 8))))
+  (if (or (btn 0) (btn 1) (btn 2) (btn 3))
+      (set player.idle 0)
+      (set player.idle (+ player.idle 1))))
 
 (fn pick-up-bomb [tile]
   (if (= tile 208) (set player.carry 336)
@@ -332,7 +336,8 @@
       (spr sprite
            (+ x sx (* ox -8))
            (+ y sy (* oy -8)) 0)))
-  (when (< 0 player.reset)
+  (when (or (< 0 player.reset)
+            (< 256 player.idle))
     (print "hold x to reset" 8 8 12))
   (when player.msg
     (print player.msg 8 128 12)

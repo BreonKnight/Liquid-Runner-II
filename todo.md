@@ -12,8 +12,8 @@
 * [X] swimming in half-water
 * [X] checkpoint saves map state
 
-* [ ] horizontal pipes
-* [ ] overflow
+* [ ] horizontal pipes?
+* [ ] overflow?
 
 * [X] sliding movement
 * [X] waterfall animation
@@ -28,7 +28,7 @@
 * [X] ice
 * [ ] pipes that pump from down to up?
 
-* [ ] explain that you can reset with X
+* [X] explain that you can reset with X
 
 ## Sprites
 
