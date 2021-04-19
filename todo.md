@@ -24,7 +24,8 @@
 * [ ] enemies
 
 * [X] ice
-* [-] pipes that pump from down to up
+* [ ] don't let player get stuck in ice
+* [X] pipes that pump from down to up
 
 * [X] explain that you can reset with X
 
