@@ -143,6 +143,21 @@
       (set pipe.from (group pipe.x pipe.y flags.water []))
       (when (= 0 (length pipe.from))
         (tset active-pipes pipe.key nil)))))
+;;enemies
+
+(fn enemy-lr [e]
+  (when (not (< e.min-x e.x e.max-x))
+    (set e.dir (* e.dir -1)))
+  (set e.x (+ e.x e.dir)))
+
+(fn nothing [e])
+
+(local enemies
+       [{:x 71 :y 960 :spr 480 :h 16 :w 16 
+         :min-x 50 :max-x 72 :update enemy-lr :dir -1}
+        {:x (* 8 30) :y (* 8 102) :spr 482 :h 16 :w 16 :update nothing}
+        {:x (* 8 31) :y (* 8 107) :spr 484 :h 16 :w 16 :update nothing}
+        {:x (* 8 50) :y (* 8 133) :spr 486 :h 16 :w 16 :update nothing}])
 
 ;; movement logic
 
@@ -325,9 +340,14 @@
     (when (= 0 b.timer)
       (trigger-bomb b))
     (when (< b.timer -30)
-      (tset bombs i nil))))
+      (tset bombs i nil)))
+  (each [_ e (pairs enemies)]
+    (e.update e)))
 
 (local waterfall-tiles [270 271 286 287])
+
+(fn draw-enemy [e]
+  (spr e.spr e.x e.y))
 
 (fn draw []
   (cls)
@@ -341,6 +361,10 @@
              (+ sx (* (- p.x ox) 8))
              (+ sy (* (- y oy) 8)))))
     (map ox oy 31 18 sx sy 0)
+    (each [_ e (pairs enemies)]
+      (spr e.spr (+ e.x sx (* ox -8))
+                 (+ e.y sy (* oy -8))
+                 0 1 0 0 (/ e.w 8) (/ e.h 8)))
     (each [_ {: x : y : sprite : timer} (pairs bombs)]
       (let [bx (+ x sx (* ox -8))
             by (+ y sy (* oy -8))]
