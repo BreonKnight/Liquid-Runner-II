@@ -33,8 +33,12 @@
 * [X] explain the Z button
 
 * [X] message tile system
+* [X] conditional messages
 * [ ] think thru what messages to add
 * [ ] jokes
+* [ ] "press Z to drop" msg
+
+* [ ] points
 
 ## Maybe code
 
