@@ -24,10 +24,13 @@
 * [ ] enemies
 
 * [X] ice
-* [ ] don't let player get stuck in ice
+* [X] don't let player get stuck in ice
 * [X] pipes that pump from down to up
 
 * [X] explain that you can reset with X
+* [ ] explain the Z button
+
+* [ ] dialog
 
 ## Maybe code
 
