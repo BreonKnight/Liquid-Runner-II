@@ -22,8 +22,8 @@
 * [X] bomb collision detection
 
 * [-] enemy movement
-* [ ] enemy collision detection
-* [ ] enemy attacks
+* [X] enemy collision detection
+* [ ] enemy attacks?
 
 * [X] ice
 * [X] don't let player get stuck in ice
@@ -34,9 +34,9 @@
 
 * [X] message tile system
 * [X] conditional messages
+* [X] "press Z to drop" msg
 * [ ] think thru what messages to add
 * [ ] jokes
-* [ ] "press Z to drop" msg
 
 * [X] points
 
