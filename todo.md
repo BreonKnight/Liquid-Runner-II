@@ -38,7 +38,7 @@
 * [ ] jokes
 * [ ] "press Z to drop" msg
 
-* [ ] points
+* [X] points
 
 ## Maybe code
 
