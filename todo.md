@@ -21,23 +21,27 @@
 * [X] bomb exploding animation
 * [X] bomb collision detection
 
-* [ ] enemies
+* [-] enemy movement
+* [ ] enemy collision detection
+* [ ] enemy attacks
 
 * [X] ice
 * [X] don't let player get stuck in ice
 * [X] pipes that pump from down to up
 
 * [X] explain that you can reset with X
-* [ ] explain the Z button
+* [X] explain the Z button
 
-* [ ] dialog
+* [X] message tile system
+* [ ] think thru what messages to add
+* [ ] jokes
 
 ## Maybe code
 
 * [ ] bomb throwing
-* [ ] horizontal pipes?
 * [ ] overflow?
 * [ ] electrical system
+* [ ] jump boots
 
 ## Sprites
 
