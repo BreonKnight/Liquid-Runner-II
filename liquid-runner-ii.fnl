@@ -5,7 +5,7 @@
 ;; input: gamepad
 ;; saveid: liquid-runner-ii
 
-;; utility functions
+;;; utility functions
 
 (macro icollect* [iter-tbl value-expr ...] ; from newer fennel
   `(let [tbl# []]
@@ -25,6 +25,7 @@
     y (find tbl x (+ n 1))))
 
 (fn find-by [tbl pred]
+  "Return the first value for which (pred x) returns truthy."
   (each [k v (pairs tbl)]
     (when (pred v k) (lua "return v, k"))))
 
@@ -60,7 +61,7 @@
 
 (fn pmget [x y] (mget (// x 8) (// y 8)))
 
-;; setup
+;;; setup
 
 (local (start-x start-y) (values 16 944))
 (local checkpoint-player {:x start-x :y start-y
@@ -77,7 +78,7 @@
 (local flags {:wall 0 :ladder 1 :water 2 :pipe 3
               :ice 5 :spawner 6 :pump 7})
 
-;; water
+;;; water
 
 (fn pipe-contains? [cx cy {: tiles}]
   (find-by tiles #(match $ [cx cy] true)))
@@ -152,7 +153,7 @@
       (when (= 0 (length pipe.from))
         (tset active-pipes pipe.key nil)))))
 
-;;enemies
+;;; enemies
 
 (fn enemy-lr [e]
   (when (not (< e.min-x e.x e.max-x))
@@ -168,7 +169,7 @@
         {:x (* 8 31) :y (* 8 107) :spr 484 :h 16 :w 16 :update nothing}
         {:x (* 8 50) :y (* 8 132) :spr 486 :h 16 :w 16 :update nothing}])
 
-;; movement logic
+;;; movement logic
 
 (local poffsets
        [[-1 -1] [0 -1] [1 -1]
@@ -210,11 +211,13 @@
                (< (tile-level (pmget player.x (+ player.y player.h -1)))
                   (- 8 (math.fmod player.y 8)))))))
 
+;;; checkpoints
+
 (fn reset []
   (sync 4 1 false)
   (into player checkpoint-player)
-  (each [_ [px py] (pairs checkpoint-pipes)]
-    (activate-pipe px py))
+  (each [_ [px py flag] (pairs checkpoint-pipes)]
+    (activate-pipe px py flag))
   (set player.reset -100)
   (set player.msg nil))
 
@@ -230,7 +233,9 @@
   (sync 4 1 true)
   (into checkpoint-player player)
   (each [_ p (pairs active-pipes)]
-    (table.insert checkpoint-pipes [p.x p.y])))
+    (table.insert checkpoint-pipes [p.x p.y p.flag])))
+
+;;; general input actions
 
 (fn drop-bomb [sprite]
   (set player.carry false)
@@ -240,6 +245,7 @@
 (fn left-sprite? [s] (<= 288 s 291))
 (fn right-sprite? [s] (<= 256 s 259))
 
+;; which player animation frame is next?
 (fn next-spr [s dir]
   (if (and (left-sprite? s) (= 1 dir)) 256
       (and (right-sprite? s) (= -1 dir)) 291
@@ -260,14 +266,14 @@
            (fget (mget (// (+ x 7) 8) (- (// y 8) 1)) flags.wall))))
 
 (fn input []
-  (let [{: x : y} player]
+  (let [{: x : y} player] ; horizontal
     (when (btn 2) (go -1))
     (when (btn 3) (go 1))
     (when (or (inside? player flags.wall)
               (bomb-in-wall? player))
       (set player.x x)
       (set player.y y)))
-  (let [{: x : y} player]
+  (let [{: x : y} player] ; vertical
     (when (and (btn 0) (up-ok? player))
       (set player.y (+ player.y -1)))
     (when (and (btn 1) (down-ok? player))
@@ -277,7 +283,7 @@
               (bomb-in-wall? player))
       (set player.x x)
       (set player.y y)))
-  (when (btnp 4)
+  (when (btnp 4) ; pressing Z
     (if player.carry
         (drop-bomb player.carry)
         (do
@@ -295,6 +301,8 @@
   (if (or (btn 0) (btn 1) (btn 2) (btn 3))
       (set player.idle 0)
       (set player.idle (+ player.idle 1))))
+
+;;; update functions
 
 (fn pick-up-bomb [tile]
   (if (= tile 208) (set player.carry 336)
@@ -315,15 +323,16 @@
              (< (math.random) 0.3))
     (set player.y (+ player.y 1))))
 
+;; ice tiles are unique because their collison box
+;; doesn't always follow the 8x8 grid
 (fn ice-gravity []
   (let [level (tile-level (pmget player.x (+ player.y player.h -1)))]
     (when (and (< level (- 8 (math.fmod player.y 8)))
                (not (inside? player flags.ladder)))
       (set player.y (+ player.y 1)))))
 
-(local bomb-flags {336 flags.ice 337 flags.water})
-
 (fn melt [x y] (mset x y (- (mget x y) 8)))
+
 (fn freeze [x y]
   ;; push the player out of the ice if they get stuck in it
   (when (and (= x (// player.x 8)) (= y (+ 1 (// player.y 8))))
@@ -332,6 +341,8 @@
       (set ty (- ty 1)))
     (set player.y (- (* ty 8) 8)))
   (mset x y (+ (mget x y) 8)))
+
+(local bomb-flags {336 flags.ice 337 flags.water})
 
 (fn trigger-bomb [b]
   (let [affected (group (// b.x 8) (// b.y 8)
@@ -379,14 +390,18 @@
     (each [_ pipe (pairs active-pipes)]
       (flow pipe)))
   (handle-special-tiles)
+  ;; bombs
   (each [i b (pairs bombs)]
     (set b.timer (- b.timer 1))
     (when (= 0 b.timer)
       (trigger-bomb b))
     (when (< b.timer -30)
       (tset bombs i nil)))
+  ;; enemies
   (each [_ e (pairs enemies)]
     (e.update e)))
+
+;; drawing
 
 (local waterfall-tiles [270 271 286 287])
 
@@ -394,22 +409,27 @@
   (cls)
   (let [x-offset (- player.x 112)
         y-offset (- player.y 64)]
+    ;; pipes
     (each [_ p (pairs active-pipes)]
       (for [y p.y (. p.to 2)]
         (spr (pick waterfall-tiles)
              (- (* p.x 8) x-offset)
              (- (* y 8) y-offset))))
+    ;; map
     (map (// x-offset 8) (// y-offset 8) 31 18
          (- (% player.x 8)) (- (% player.y 8)) 0)
+    ;; enemies
     (each [_ e (pairs enemies)]
       (spr e.spr (- e.x x-offset) (- e.y y-offset)
-                 0 1 0 0 (/ e.w 8) (/ e.h 8)))
+           0 1 0 0 (/ e.w 8) (/ e.h 8)))
+    ;; bombs
     (each [_ {: x : y : sprite : timer} (pairs bombs)]
       (let [bx (- x x-offset) by (- y y-offset)]
         (spr sprite bx by 0)
         (when (< timer 0)
           (circ (+ bx 4) (+ by 4) (* timer -0.3)
                 (if (= sprite 336) 3 12))))))
+  ;; UI things
   (when (or (< 0 player.reset)
             (< 256 player.idle))
     (print "hold x to reset" 8 8 12))
@@ -419,7 +439,8 @@
     (set player.msg-count (- (or player.msg-count 120) 1))
     (when (<= player.msg-count 0)
       (set (player.msg-count player.msg) 120)))
-  (let [pspr (if player.carry
+  ;; player
+  (let [pspr (if player.carry ; arms up?
                  (+ player.spr 4)
                  player.spr)]
     (spr pspr 112 64 0 1 0 0 1 2))
@@ -432,6 +453,9 @@
   (draw))
 
 ;; change the [!] msg sprite to be invisible
+;; we want to be able to see it so we can place it
+;; on the map, but we don't want players to see it.
+
 (for [addr (+ 0x4000 (* 255 32)) 0x6000]
   (poke addr 0))
 
