@@ -40,6 +40,13 @@
 
 * [X] points
 
+* [X] freeze stops flows
+* [X] allow reset after winning
+* [X] pump out the bottom tile
+* [X] make pick-up collision detection wider
+* [X] pumps leave behind one pixel
+* [X] freezing can leave you stuck if you hold up
+
 ## Maybe code
 
 * [ ] bomb throwing
