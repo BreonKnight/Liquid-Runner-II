@@ -21,9 +21,9 @@
 * [X] bomb exploding animation
 * [X] bomb collision detection
 
-* [-] enemy movement
+* [X] enemy movement
 * [X] enemy collision detection
-* [ ] enemy attacks?
+* [X] enemy positions on the map
 
 * [X] ice
 * [X] don't let player get stuck in ice
@@ -46,6 +46,9 @@
 * [X] make pick-up collision detection wider
 * [X] pumps leave behind one pixel
 * [X] freezing can leave you stuck if you hold up
+
+* [ ] reset bug
+* [ ] show the score when you win
 
 ## Maybe code
 
