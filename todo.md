@@ -49,6 +49,8 @@
 
 * [ ] reset bug
 * [ ] show the score when you win
+* [ ] enemies reverse
+* [ ] message that bombs don't work on enemies
 
 ## Maybe code
 
