@@ -24,6 +24,7 @@
 * [X] enemy movement
 * [X] enemy collision detection
 * [X] enemy positions on the map
+* [X] up/down enemies
 
 * [X] ice
 * [X] don't let player get stuck in ice
@@ -47,10 +48,11 @@
 * [X] pumps leave behind one pixel
 * [X] freezing can leave you stuck if you hold up
 
-* [ ] reset bug
-* [ ] show the score when you win
-* [ ] enemies reverse
-* [ ] message that bombs don't work on enemies
+* [X] reset bug
+* [X] show the score when you win
+* [X] enemies reverse
+* [X] message that bombs don't work on enemies
+* [ ] collision box for pickups should include feet
 
 ## Maybe code
 
