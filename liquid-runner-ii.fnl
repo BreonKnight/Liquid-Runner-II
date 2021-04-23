@@ -109,12 +109,14 @@
                                       [bottom-x bottom-y top-x top-y])]
     ;; refuse to activate a pipe with no water
     (when (< 0 (length from))
+      (sfx 0 nil -1 0 6)
       (tset active-pipes key {: tiles : key : flag : from : to
                               : from-x : from-y : to-x : to-y}))))
 
 (fn toggle-pipe [cx cy flag]
   (match (find-by active-pipes (partial pipe-contains? cx cy))
-    pipe (tset active-pipes pipe.key nil)
+    pipe (do (tset active-pipes pipe.key nil)
+             (sfx -1))
     _ (activate-pipe cx cy flag)))
 
 (fn tile-level [t] (// t 16))
@@ -155,6 +157,7 @@
     (when (= level 1)
       (set pipe.from (group pipe.from-x pipe.from-y flags.water []))
       (when (= 0 (length pipe.from))
+        (sfx -1)
         (tset active-pipes pipe.key nil)))))
 
 ;;; movement logic
