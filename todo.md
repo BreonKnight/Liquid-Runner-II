@@ -52,7 +52,9 @@
 * [X] show the score when you win
 * [X] enemies reverse
 * [X] message that bombs don't work on enemies
-* [ ] collision box for pickups should include feet
+* [X] collision box for pickups should include feet
+
+* [ ] double-draining bug
 
 ## Maybe code
 
@@ -69,7 +71,7 @@
 
 ## Levels
 
-* introduce each enemy
+* [X] introduce each enemy
 
 ## Music
 
