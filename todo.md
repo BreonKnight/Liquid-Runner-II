@@ -36,8 +36,8 @@
 * [X] message tile system
 * [X] conditional messages
 * [X] "press Z to drop" msg
-* [ ] think thru what messages to add
-* [ ] jokes
+* [X] think thru what messages to add
+* [ ] more jokes
 
 * [X] points
 
@@ -77,6 +77,9 @@
 
 ## sfx
 
-* [ ] bombs
+* [ ] ice bomb
+* [ ] fire bomb
 * [ ] checkpoint
+* [ ] flash drives
+* [ ] DVD
 * [X] waterfall
