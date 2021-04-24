@@ -89,7 +89,8 @@
 
 (fn pipe-down [[px py] remaining]
   (assert (< 0 remaining) "pipe goes nowhere!")
-  (if (fget (mget px (+ py 1)) flags.wall)
+  (if (or (fget (mget px (+ py 1)) flags.wall)
+          (fget (mget px py) flags.water))
       [px py]
       (pipe-down [px (+ py 1)] (- remaining 1))))
 
@@ -437,8 +438,8 @@
           (melt x y)
           (freeze x y)))))
 
-(fn no-water [msg x y]
-  #(and (not (fget (mget x y) flags.water)) msg))
+(fn no-water [msg x y duration]
+  #(if (not (fget (mget x y) flags.water)) (values msg duration)))
 
 (local msgs
        {"4x119" "So this is it; the fabled secret warehouse."
@@ -448,9 +449,9 @@
         "20x133" "Oh, a DVD-R full of NFTs to smash."
         "32x130" "Pressing Z will start and stop the flow."
         "36x132" (no-water "If only I could swim up to reach the ladder."
-                           36 133)
+                           36 133 300)
         "25x107" "Oh wow, an ice bomb."
-        "29x127" (no-water "Might need to reset by holding X..." 29 128)
+        "29x127" (no-water "Might need to reset by holding X..." 29 128 600)
         "32x114" "I can use that bomb by pressing Z here."
         "30x120" "And this fire bomb can melt this ice."
         "10x128" "Sweet; found a stash of NFT flash drives!"
@@ -461,11 +462,12 @@
 
 (fn show-msg [cx cy]
   (mset cx cy 0)
-  (let [msg (. msgs (xykey cx cy))]
-    (set player.msg-count 120)
-    (set player.msg (if (= :function (type msg))
-                        (msg)
-                        msg))))
+  (let [msg (. msgs (xykey cx cy))
+        (msg ?duration) (if (= :function (type msg))
+                            (msg)
+                            msg)]
+    (set player.msg-count (or ?duration 120))
+    (set player.msg msg)))
 
 (fn win []
   (cls)
@@ -490,11 +492,9 @@
       (pick-up-bomb foot-tile))
     (match (. pickups head-tile)
       points (do (mset (// x 8) (// y 8) 0)
-                 (dbg :head points)
                  (set player.score (+ player.score points))))
     (match (. pickups foot-tile)
       points (do (mset (// x 8) (// (+ y player.h -1) 8) 0)
-                 (dbg :foot points)
                  (set player.score (+ player.score points))))))
 
 (fn update []
