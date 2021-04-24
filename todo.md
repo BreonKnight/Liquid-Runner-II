@@ -58,20 +58,13 @@
 * [X] longer msgs
 * [X] dialog
 
-* [ ] end-game text
-
-## Maybe code
-
-* [ ] bomb throwing
-* [ ] overflow?
-* [ ] electrical system
-* [ ] jump boots
+* [X] end-game text
 
 ## Sprites
 
 * [X] underwater ladder tiles
 * [X] pipes going thru walls
-* [ ] ending screen
+* [X] ending screen
 
 ## Levels
 
@@ -86,4 +79,4 @@
 
 * [ ] bombs
 * [ ] checkpoint
-* [ ] waterfall
+* [X] waterfall
