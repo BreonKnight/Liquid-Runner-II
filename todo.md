@@ -54,7 +54,7 @@
 * [X] message that bombs don't work on enemies
 * [X] collision box for pickups should include feet
 
-* [ ] double-draining bug
+* [X] double-draining bug
 * [X] longer msgs
 * [X] dialog
 
