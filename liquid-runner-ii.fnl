@@ -66,6 +66,7 @@
 
 ;;; setup
 
+(var total-possible-score 0)
 (local (start-x start-y) (values 16 944))
 (local checkpoint-player {:x start-x :y start-y :score 0
                           :w 8 :h 16 :spr 256 :reset 0
@@ -500,6 +501,7 @@ of them deeper in the warehouse."]})
     (reset)
     (set _G.TIC _G.play))
   (print (.. player.score " points") 150 10 8)
+  (print (.. "out of " total-possible-score) 158 20 8)
   (print "YOU WIN" 75 75 14 false 3))
 
 (local pickups {228 100 244 500})
@@ -617,6 +619,8 @@ of them deeper in the warehouse."]})
     (when (= 239 (mget x y))
       (mset x y 0)
       (set (player.cheat-x player.cheat-y) (values x y)))
+    (match (. pickups (mget x y))
+      points (set total-possible-score (+ total-possible-score points)))
     (match (make-enemy (mget x y))
       enemy (do
               (each [k v (pairs {:x (* x 8) :y (* y 8) :h 16})]

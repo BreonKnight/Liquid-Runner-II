@@ -58,6 +58,8 @@
 * [X] longer msgs
 * [X] dialog
 
+* [ ] end-game text
+
 ## Maybe code
 
 * [ ] bomb throwing
