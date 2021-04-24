@@ -55,7 +55,8 @@
   out)
 
 (fn into [to from]
-  (each [k v (pairs from)] (tset to k v)))
+  (each [k v (pairs from)] (tset to k v))
+  to)
 
 (fn pick [tbl] (. tbl (math.random (length tbl))))
 
@@ -438,6 +439,31 @@
           (melt x y)
           (freeze x y)))))
 
+(local dialogs
+       {"6x131" ["What are you doing here?"
+                 "Oh, searching for the alexis
+self-destruct code? Awesome.
+You've come to the right place."
+                 "These flash drives contain anti-labor
+propaganda. I'm replacing their data
+with something a little more ... spicy."
+                 "You can help out the workers' cause
+by doing the same if you see any more
+of them deeper in the warehouse."]})
+
+(fn draw-dialog [line]
+  (rect 2 2 236 38 13)
+  (rectb 3 3 234 36 14)
+  (spr 368 8 8 0 1 0 0 2 2)
+  (print line 28 12 12))
+
+(fn dialog [lines]
+  (_G.draw)
+  (match (. lines 1)
+    line (draw-dialog line)
+    nil (set _G.TIC _G.play))
+  (when (btnp 4) (table.remove lines 1)))
+
 (fn no-water [msg x y duration]
   #(if (not (fget (mget x y) flags.water)) (values msg duration)))
 
@@ -446,7 +472,7 @@
         "13x118" "If I swim to that pipe, I can press Z..."
         "20x125" "Maybe I could swim across?"
         "14x133" "What's that shiny thing over there?"
-        "20x133" "Oh, a DVD-R full of NFTs to smash."
+        "20x133" "Oh, a DVD-R full of tax fraud evidence."
         "32x130" "Pressing Z will start and stop the flow."
         "36x132" (no-water "If only I could swim up to reach the ladder."
                            36 133 300)
@@ -454,7 +480,6 @@
         "29x127" (no-water "Might need to reset by holding X..." 29 128 600)
         "32x114" "I can use that bomb by pressing Z here."
         "30x120" "And this fire bomb can melt this ice."
-        "10x128" "Sweet; found a stash of NFT flash drives!"
         "50x132" "Whoa, better watch out, monsters!"
         "24x74" "Bombs won't stop the monsters."
         "80x102" "Hmm... Looks tricky; better think this thru."
@@ -478,6 +503,7 @@
   (print "YOU WIN" 75 75 14 false 3))
 
 (local pickups {228 100 244 500})
+(local pickup-replace {228 213 244 0})
 
 (fn handle-special-tiles [x y]
   (let [head-tile (mget (// x 8) (// y 8))
@@ -486,15 +512,19 @@
       (set-checkpoint x y))
     (when (= 255 head-tile)
       (show-msg (// x 8) (// y 8)))
+    (when (= 254 head-tile)
+      (mset (// x 8) (// y 8) 0)
+      (set _G.TIC (partial dialog (into (. dialogs (xykey (// x 8) (// y 8))) []))))
     (when (= 229 head-tile)
       (set _G.TIC win))
     (when (fget foot-tile flags.spawner)
       (pick-up-bomb foot-tile))
     (match (. pickups head-tile)
-      points (do (mset (// x 8) (// y 8) 0)
+      points (do (mset (// x 8) (// y 8) (. pickup-replace head-tile))
                  (set player.score (+ player.score points))))
     (match (. pickups foot-tile)
-      points (do (mset (// x 8) (// (+ y player.h -1) 8) 0)
+      points (do (mset (// x 8) (// (+ y player.h -1) 8)
+                       (. pickup-replace head-tile))
                  (set player.score (+ player.score points))))))
 
 (fn update []
@@ -524,7 +554,7 @@
 
 (local waterfall-tiles [270 271 286 287])
 
-(fn draw []
+(fn _G.draw []
   (cls)
   (let [x-offset (- player.x 112)
         y-offset (- player.y 64)]
@@ -572,7 +602,7 @@
 (fn _G.play []
   (input)
   (update)
-  (draw))
+  (_G.draw))
 
 (fn make-enemy [s]
   (match s
@@ -594,11 +624,11 @@
               (table.insert enemies enemy)
               (mset x y 0)))))
 
-;; change the [!] msg sprite to be invisible
-;; we want to be able to see it so we can place it
-;; on the map, but we don't want players to see it.
+;; change the [!] and [?] msg sprites to be invisible
+;; we want to be able to see them so we can place them
+;; on the map, but we don't want players to see them.
 
-(for [addr (+ 0x4000 (* 255 32)) 0x6000]
+(for [addr (+ 0x4000 (* 254 32)) 0x6000]
   (poke addr 0))
 
 ;; write init state to bank in order to allow reset

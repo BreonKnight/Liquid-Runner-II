@@ -55,6 +55,8 @@
 * [X] collision box for pickups should include feet
 
 * [ ] double-draining bug
+* [X] longer msgs
+* [X] dialog
 
 ## Maybe code
 
