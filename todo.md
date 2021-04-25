@@ -61,8 +61,8 @@
 * [X] end-game level area
 * [X] special 10000 point ending
 * [X] enemy gets stuck after reset bug
-* [ ] ending decoration
-* [ ] credits
+* [X] ending decoration
+* [X] credits
 
 ## Sprites
 
