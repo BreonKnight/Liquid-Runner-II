@@ -14,7 +14,7 @@
 
 * [X] sliding movement
 * [X] waterfall animation
-* [ ] falling animation
+* [X] climbing animation
 * [ ] swimming animation
 
 * [X] bomb carrying animation
