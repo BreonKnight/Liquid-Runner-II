@@ -59,6 +59,7 @@
 * [X] dialog
 
 * [X] end-game text
+* [ ] end-game level area
 
 ## Sprites
 
@@ -77,9 +78,10 @@
 
 ## sfx
 
-* [ ] ice bomb
-* [ ] fire bomb
-* [ ] checkpoint
-* [ ] flash drives
-* [ ] DVD
-* [X] waterfall
+* [ ] ice bomb (channel 2)
+* [ ] fire bomb (channel 2)
+* [X] flash drives (channel 3)
+* [-] DVD (channel 3)
+* [X] ouch (channel 1)
+* [X] waterfall (channel 0)
+* [X] checkpoint (channel 1)
