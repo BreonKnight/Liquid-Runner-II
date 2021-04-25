@@ -535,7 +535,13 @@ Hold down A and press X next time."]})
           (math.min (// win-t 10) 28) 0)))
 
 (local pickups {228 100 244 500})
-(local pickup-replace {228 213 244 0})
+(local pickup-replace {100 213 500 0})
+(local pickup-notes {100 "B-5" 500 "B-4"})
+
+(fn pickup [points x y]
+  (mset (// x 8) (// y 8) (. pickup-replace points))
+  (sfx 62 (. pickup-notes points) 17 3)
+  (set player.score (+ player.score points)))
 
 (fn handle-special-tiles [x y]
   (let [head-tile (mget (// x 8) (// y 8))
@@ -552,14 +558,9 @@ Hold down A and press X next time."]})
     (when (fget foot-tile flags.spawner)
       (pick-up-bomb foot-tile))
     (match (. pickups head-tile)
-      points (do (mset (// x 8) (// y 8) (. pickup-replace head-tile))
-                 (sfx 62 "B-5" 17 3)
-                 (set player.score (+ player.score points))))
+      points (pickup points x y))
     (match (. pickups foot-tile)
-      points (do (mset (// x 8) (// (+ y player.h -1) 8)
-                       (sfx 62 "B-5" 17 3)
-                       (. pickup-replace foot-tile))
-                 (set player.score (+ player.score points))))))
+      points (pickup points x (+ y player.h -1)))))
 
 (fn update []
   (if (inside? player flags.ice)
