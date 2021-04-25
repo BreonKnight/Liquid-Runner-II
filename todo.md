@@ -15,7 +15,6 @@
 * [X] sliding movement
 * [X] waterfall animation
 * [X] climbing animation
-* [ ] swimming animation
 
 * [X] bomb carrying animation
 * [X] bomb exploding animation
@@ -59,7 +58,9 @@
 * [X] dialog
 
 * [X] end-game text
-* [ ] end-game level area
+* [X] end-game level area
+* [ ] enemy gets stuck after reset bug
+* [ ] special 10000 point ending
 
 ## Sprites
 
@@ -78,10 +79,10 @@
 
 ## sfx
 
-* [ ] ice bomb (channel 2)
-* [ ] fire bomb (channel 2)
+* [X] ice bomb (channel 2)
+* [X] fire bomb (channel 2)
 * [X] flash drives (channel 3)
-* [-] DVD (channel 3)
+* [X] DVD (channel 3)
 * [X] ouch (channel 1)
 * [X] waterfall (channel 0)
 * [X] checkpoint (channel 1)
