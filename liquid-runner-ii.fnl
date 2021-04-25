@@ -79,6 +79,7 @@
 (local active-pipes [])
 (local bombs [])
 (local enemies [])
+(global es enemies)
 
 ;; 4 is still unused
 (local flags {:wall 0 :ladder 1 :water 2 :pipe 3
@@ -215,20 +216,6 @@
 
 ;;; enemies
 
-(fn reset []
-  (sfx -1)
-  (sync 4 1 false)
-  (into player checkpoint-player)
-  (each [k (pairs active-pipes)]
-    (tset active-pipes k nil))
-  (each [_ [px py flag] (pairs checkpoint-pipes)]
-    (activate-pipe px py flag))
-  (each [i [ex ey] (ipairs checkpoint-enemies)]
-    (let [e (. enemies i)]
-      (set (e.x e.y) (values ex ey))))
-  (set player.reset -100)
-  (set player.msg nil))
-
 (fn enemy-lr [e]
   (let [{: x : y} e]
     (set e.x (+ e.x e.dx))
@@ -259,31 +246,51 @@
       (if (< 0 dx) :right :left)))
 
 ;; movement decisions are only ever made on cell boundaries
-(fn enemy-move [dx dy pursue]
+(fn enemy-move [dx dy pursue ?retry i]
   (fn [e]
     (let [{: x : y} e]
       (set [e.x e.y] [(+ e.x dx) (+ e.y dy)])
+      (when (btn 5) (dbg :moving i e.x e.y dx dy))
       (when (and (= (/ e.x 8) (// e.x 8)) (= (/ e.y 8) (// e.y 8)))
         (set e.update pursue))
       (when (inside? e flags.wall)
+        (when (btn 5) (dbg :bump i))
         (set [e.x e.y] [x y])
-        (pursue e true))
+        (pursue e i (not ?retry)))
       (when (and (not (stand-on? e flags.wall))
                  (not (stand-on? e flags.ladder))
                  (not (inside? e flags.ladder)))
         ;; gravity
         (set e.y (+ e.y 1))))))
 
-(fn enemy-pursue [e ?retry]
+(fn enemy-pursue [e i ?retry]
   (let [dx (- player.x e.x)
         dy (- player.y e.y)
         c1 (enemy-pursue-first-choice e dx dy)
         c2 (enemy-pursue-second-choice e dx dy c1)]
+    (when (btn 5)
+      (dbg :pursue i e.x e.y c1 c2 (tostring ?retry)))
     (match (if ?retry c2 c1)
-      :left (set e.update (enemy-move -1 0 enemy-pursue))
-      :right (set e.update (enemy-move 1 0 enemy-pursue))
-      :up (set e.update (enemy-move 0 -1 enemy-pursue))
-      :down (set e.update (enemy-move 0 1 enemy-pursue)))))
+      :left (set e.update (enemy-move -1 0 enemy-pursue ?retry i))
+      :right (set e.update (enemy-move 1 0 enemy-pursue ?retry i))
+      :up (set e.update (enemy-move 0 -1 enemy-pursue ?retry i))
+      :down (set e.update (enemy-move 0 1 enemy-pursue ?retry i)))))
+
+(fn reset []
+  (sfx -1)
+  (sync 4 1 false)
+  (into player checkpoint-player)
+  (each [k (pairs active-pipes)]
+    (tset active-pipes k nil))
+  (each [_ [px py flag] (pairs checkpoint-pipes)]
+    (activate-pipe px py flag))
+  (each [i [ex ey] (ipairs checkpoint-enemies)]
+    (let [e (. enemies i)]
+      (set (e.x e.y) (values (// ex 1) (// ey 1)))
+      (when (= e.spr 482) (set e.update enemy-pursue))
+      (dbg :reset-enemy i e.x e.y)))
+  (set player.reset -100)
+  (set player.msg nil))
 
 (fn ded []
   (set player.ded (+ player.ded 1))
@@ -312,12 +319,13 @@
   (when (= 60 player.reset)
     (reset)))
 
-(fn set-checkpoint [x y]
-  (set player.msg "Checkpoint!")
-  (set player.msg-count 90)
-  (mset (// x 8) (// y 8) 227)
+(fn set-checkpoint [x y skip-flag?]
+  (when (not skip-flag?)
+    (set player.msg "Checkpoint!")
+    (set player.msg-count 90)
+    (mset (// x 8) (// y 8) 227)
+    (sfx 60 "C#4" 40 1))
   (sync 4 1 true)
-  (sfx 60 "C#4" 40 1)
   (into checkpoint-player player)
   (clear! checkpoint-pipes)
   (clear! checkpoint-enemies)
@@ -467,7 +475,8 @@ with something a little more ... spicy."
                  "You can help out the workers' cause
 by doing the same if you see any more
 of them deeper in the warehouse."]
-        "51x92" ["Nice going.\n\nShouldn't be too much further."
+        "51x92" ["Nice going.\nYou're making good progress
+but there's still a ways to go."
                   "There's a password you can use
 to jump to this point.
 Hold down A and press X next time."]})
@@ -588,8 +597,8 @@ Hold down A and press X next time."]})
     (when (< b.timer -30)
       (tset bombs i nil)))
   ;; enemies
-  (each [_ e (pairs enemies)]
-    (e.update e)
+  (each [i e (pairs enemies)]
+    (e.update e i)
     (enemy-collide e)))
 
 ;; drawing
@@ -683,6 +692,7 @@ Hold down A and press X next time."]})
 (sync 4 1 true)
 
 (set _G.TIC _G.play)
+(set-checkpoint player.x player.y true)
 
 ;; <TILES>
 ;; 001:5666666f5666666f056666f0056666f0056666f0056666f0056666f0056666f0
