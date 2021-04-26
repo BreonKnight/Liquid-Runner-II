@@ -63,6 +63,7 @@
 * [X] enemy gets stuck after reset bug
 * [X] ending decoration
 * [X] credits
+* [X] drain/pump bug
 
 ## Sprites
 
