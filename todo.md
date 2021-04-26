@@ -14,8 +14,7 @@
 
 * [X] sliding movement
 * [X] waterfall animation
-* [ ] falling animation
-* [ ] swimming animation
+* [X] climbing animation
 
 * [X] bomb carrying animation
 * [X] bomb exploding animation
@@ -36,8 +35,8 @@
 * [X] message tile system
 * [X] conditional messages
 * [X] "press Z to drop" msg
-* [ ] think thru what messages to add
-* [ ] jokes
+* [X] think thru what messages to add
+* [ ] more jokes
 
 * [X] points
 
@@ -52,24 +51,28 @@
 * [X] show the score when you win
 * [X] enemies reverse
 * [X] message that bombs don't work on enemies
-* [ ] collision box for pickups should include feet
+* [X] collision box for pickups should include feet
 
-## Maybe code
+* [X] double-draining bug
+* [X] longer msgs
+* [X] dialog
 
-* [ ] bomb throwing
-* [ ] overflow?
-* [ ] electrical system
-* [ ] jump boots
+* [X] end-game text
+* [X] end-game level area
+* [X] special 10000 point ending
+* [X] enemy gets stuck after reset bug
+* [ ] ending decoration
+* [ ] credits
 
 ## Sprites
 
 * [X] underwater ladder tiles
 * [X] pipes going thru walls
-* [ ] ending screen
+* [X] ending screen
 
 ## Levels
 
-* introduce each enemy
+* [X] introduce each enemy
 
 ## Music
 
@@ -78,6 +81,10 @@
 
 ## sfx
 
-* [ ] bombs
-* [ ] checkpoint
-* [ ] waterfall
+* [X] ice bomb (channel 2)
+* [X] fire bomb (channel 2)
+* [X] flash drives (channel 3)
+* [X] DVD (channel 3)
+* [X] ouch (channel 1)
+* [X] waterfall (channel 0)
+* [X] checkpoint (channel 1)
